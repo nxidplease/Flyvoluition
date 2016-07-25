@@ -11,6 +11,12 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
+
+/**
+ * This class is in charge of my balls
+ * @author Asaf Weiss
+ *
+ */
 public abstract class ShaderProgram {
 	
 	private int programID;
