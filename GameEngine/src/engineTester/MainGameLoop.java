@@ -22,6 +22,7 @@ import entities.Camera;
 import entities.Entity;
 import entities.Light;
 import entities.Player;
+import entities.Farmer;
 
 public class MainGameLoop {
 
@@ -85,13 +86,28 @@ public class MainGameLoop {
 		
 		MasterRenderer renderer = new MasterRenderer();
 		
+		
+		
+		//*********FARMER**************
+			RawModel personModel = MyObjLoader.loadObjModel("person", loader);
+			TexturedModel texturedPersonModel = new TexturedModel(personModel, new ModelTexture(loader.loadTexture("image")));
+			//Farmer toly = new Farmer(texturedPersonModel, new Vector3f(), 0, 0, 0, 1);
+		
+		//*******************************
+		
+			List<Farmer> farmers = new ArrayList<>();
+			for(int i = 0; i < 200; i++)
+				farmers.add(new Farmer(texturedPersonModel, new Vector3f(), 0, 0, 0, 1));
+				
+	
+			
+		
 		while(!Display.isCloseRequested()) {
 			//entity.increasePosition(0, 0, -0.1f);
 			entity.increaseRotation(0.5f, 0.5f, 0);
 			//entity1.increaseRotation(0, 1, 0);
 			camera.move();
 			player.move();
-
 			renderer.proccessEntity(player);
 			renderer.proccessTerrain(terrain);
 			renderer.proccessTerrain(terrain1);
@@ -101,8 +117,14 @@ public class MainGameLoop {
 			}
 			renderer.render(light, camera);
 			
+			for (Farmer farmer : farmers) {
+				renderer.proccessEntity(farmer);
+				farmer.move();
+			}
+			
 			// game logic
 			DisplayManger.updateDisplay();
+		
 			
 		}
 		
@@ -110,6 +132,7 @@ public class MainGameLoop {
 		loader.cleanUp();
 		DisplayManger.closeDisplay();
 
+	
 	}
 
 }
