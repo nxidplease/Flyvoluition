@@ -92,7 +92,7 @@ public class MyObjLoader {
 				}
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
+			System.out.println("gayzer");
 		}
 		
 		// Converting vertices vectors to float arrays, and indices list to array 
