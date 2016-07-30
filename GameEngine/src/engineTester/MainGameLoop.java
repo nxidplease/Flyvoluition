@@ -81,27 +81,43 @@ public class MainGameLoop {
 		for(int i = 0; i < 200; i++){
 			
 			entities.add(new Entity(grassTexturedModel, new Vector3f(rnd.nextFloat() * 400,0, rnd.nextFloat() * 400), 0, 0, 0, 3));
-			entities.add(new Entity(fernTexturedModel, new Vector3f(rnd.nextFloat() * 400 + 400,0,rnd.nextFloat() * 400 + 400), 0, 0, 0, 1));
+			entities.add(new Entity(fernTexturedModel, new Vector3f(rnd.nextFloat() * 400,0,rnd.nextFloat() * 400), 0, 0, 0, 1));
 		}
 		
 		MasterRenderer renderer = new MasterRenderer();
 		
 		
 		
-		//*********FARMER**************
+//*********FARMERS**************
 			RawModel personModel = MyObjLoader.loadObjModel("person", loader);
 			TexturedModel texturedPersonModel = new TexturedModel(personModel, new ModelTexture(loader.loadTexture("image")));
-			//Farmer toly = new Farmer(texturedPersonModel, new Vector3f(), 0, 0, 0, 1);
-		
-		//*******************************
+
 		
 			List<Farmer> farmers = new ArrayList<>();
 			for(int i = 0; i < 200; i++)
 				farmers.add(new Farmer(texturedPersonModel, new Vector3f(), 0, 0, 0, 1));
 				
+//*********END FARMERS************************
+			
+			
+//**********TREES****************************			
+RawModel treeModel = MyObjLoader.loadObjModel("treeModel", loader);
+ModelTexture tree = new ModelTexture(loader.loadTexture("tree"));
+TexturedModel treeTexturedModel = new TexturedModel(treeModel, tree);
+
+List<Entity> trees = new ArrayList<>();
+
+for(int i = 0; i < 200; i++){
+	trees.add(  new Entity(treeTexturedModel, new Vector3f(rnd.nextFloat() * 800,0,rnd.nextFloat() * 800), 0, 0, 0, (rnd.nextInt(4)+10))    );
+}	
+			
 	
 			
+//**********END TREES****************************					
 		
+			
+			
+			
 		while(!Display.isCloseRequested()) {
 			//entity.increasePosition(0, 0, -0.1f);
 			entity.increaseRotation(0.5f, 0.5f, 0);
@@ -111,6 +127,7 @@ public class MainGameLoop {
 			renderer.proccessEntity(player);
 			renderer.proccessTerrain(terrain);
 			renderer.proccessTerrain(terrain1);
+			
 
 			for (Entity entity2 : entities) {
 				renderer.proccessEntity(entity2);
@@ -121,6 +138,11 @@ public class MainGameLoop {
 				renderer.proccessEntity(farmer);
 				farmer.move();
 			}
+			
+			for (Entity aTree : trees) {
+				renderer.proccessEntity(aTree);
+			}
+			
 			
 			// game logic
 			DisplayManger.updateDisplay();
