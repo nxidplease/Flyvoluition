@@ -7,20 +7,20 @@ import org.lwjgl.util.vector.Vector3f;
 
 import renderEngine.DisplayManger;
 
-public class Player extends Entity{
+public abstract class Player extends Entity{
 
-	private static final float RUN_SPEED = 20;
-	private static final float TURN_SPEED = 160;
-	private static final float GRAVITY = -50;
-	private static final float JUMP_POWER = 30;
+	protected static final float RUN_SPEED = 20;
+	protected static final float TURN_SPEED = 160;
+	protected static final float GRAVITY = -50;
+	protected static final float JUMP_POWER = 30;
 	
 	private static final float TERRAIN_HEIGHT = 0;
 	
-	private float currentSpeed = 0;
-	private float currentTurnSpeed = 0;
-	private float upwardSpeed = 0;
+	protected float currentSpeed = 0;
+	protected float currentTurnSpeed = 0;
+	protected float upwardSpeed = 0;
 	
-	private boolean isInAir = false;
+	protected boolean isInAir = false;
 	
 	public Player(TexturedModel model, Vector3f position, float rotX,
 			float rotY, float rotZ, float scale) {
@@ -28,7 +28,6 @@ public class Player extends Entity{
 	}
 	
 	public void move(){
-		checkInputs();
 		increaseRotation(0, currentTurnSpeed * DisplayManger.getFrameTimeSeconds(), 0);
 		float distance = currentSpeed * DisplayManger.getFrameTimeSeconds();
 		float dx = (float) (distance * Math.sin(Math.toRadians(getRotY())));
@@ -41,39 +40,6 @@ public class Player extends Entity{
 			upwardSpeed = 0;
 			isInAir = false;
 			getPosition().y = TERRAIN_HEIGHT;
-		}
-	}
-	
-	private void jump(){
-		if(!isInAir){
-			this.upwardSpeed = JUMP_POWER;
-			isInAir = true;
-		}
-	}
-
-	private void checkInputs(){
-		if(Keyboard.isKeyDown(Keyboard.KEY_W)){
-			this.currentSpeed = RUN_SPEED;
-		}
-		else if(Keyboard.isKeyDown(Keyboard.KEY_S)){
-			this.currentSpeed = -RUN_SPEED;
-		}
-		else{
-			this.currentSpeed = 0;
-		}
-		
-		if(Keyboard.isKeyDown(Keyboard.KEY_D)){
-			this.currentTurnSpeed = -TURN_SPEED;
-		}
-		else if(Keyboard.isKeyDown( Keyboard.KEY_A)){
-			this.currentTurnSpeed = TURN_SPEED;
-		}
-		else {
-			this.currentTurnSpeed = 0;
-		}
-		
-		if(Keyboard.isKeyDown(Keyboard.KEY_SPACE)){
-			jump();
 		}
 	}
 	

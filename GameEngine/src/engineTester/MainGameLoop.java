@@ -1,11 +1,17 @@
 package engineTester;
 
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import javax.swing.JOptionPane;
+
 import models.RawModel;
 import models.TexturedModel;
+import net.GameClient;
+import net.GameServer;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
@@ -23,11 +29,15 @@ import entities.Entity;
 import entities.Light;
 import entities.Player;
 import entities.Farmer;
+import entities.PlayerMP;
+import entities.SelfPlayer;
 
 public class MainGameLoop {
 
+	public static GameClient client;
+	
 	public static void main(String[] args) {
-
+		
 		DisplayManger.createDisplay();
 
 		Loader loader = new Loader();
@@ -70,9 +80,36 @@ public class MainGameLoop {
 		RawModel bunny = MyObjLoader.loadObjModel("stanfordBunny", loader);
 		TexturedModel bunnyModel = new TexturedModel(bunny, new ModelTexture(loader.loadTexture("Snow")));
 
-		Player player = new Player(bunnyModel, new Vector3f(0, 0, 0),0 ,0 , 0, 1);
+		Player player = new SelfPlayer(bunnyModel, new Vector3f(0, 0, 0),0 ,0 , 0, 1);
+		PlayerMP mpPlayer = new PlayerMP(bunnyModel, new Vector3f(2, 0, 4),0 ,0 , 0, 1);
 		Camera camera = new Camera(player);
-
+		
+		GameServer server = null;
+		
+		String username = JOptionPane.showInputDialog("Enter usernanme");
+		
+		int ans = JOptionPane.showOptionDialog(null, "Would you like to run the server?", "Serer", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
+									 null, null, null);
+		
+		if(ans == JOptionPane.YES_OPTION){
+			try {
+				server = new GameServer();
+				Thread serverThread = new Thread(server);
+				serverThread.start();
+			} catch (SocketException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		try {
+			client = new GameClient("localhost", 1422, mpPlayer, username);
+			Thread clientThread = new Thread(client);
+			clientThread.start();
+		} catch (SocketException | UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
 
 
 		List<Entity> entities = new ArrayList<>();
@@ -125,6 +162,7 @@ public class MainGameLoop {
 			camera.move();
 			player.move();
 			renderer.proccessEntity(player);
+			renderer.proccessEntity(mpPlayer);
 			renderer.proccessTerrain(terrain);
 			renderer.proccessTerrain(terrain1);
 
@@ -149,9 +187,15 @@ public class MainGameLoop {
 
 
 		}
-
+		
 		renderer.cleanUp();
 		loader.cleanUp();
+		client.stop();
+		
+		if (server != null) {
+			server.stop();
+		}
+		
 		DisplayManger.closeDisplay();
 
 
